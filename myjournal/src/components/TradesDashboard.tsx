@@ -120,7 +120,7 @@ export default function TradesDashboard({ onEditTrade }: TradesDashboardProps) {
 
   const getPnLColor = (pnl?: number) => {
     if (pnl === undefined) return "text-muted-foreground"
-    return pnl >= 0 ? "text-green-600" : "text-red-600"
+    return pnl >= 0 ? "profit-text" : "loss-text"
   }
 
   const formatDate = (dateString: string) => {
@@ -221,7 +221,9 @@ export default function TradesDashboard({ onEditTrade }: TradesDashboardProps) {
         <CardContent>
           {filteredTrades.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
-              <TrendingUpIcon className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <div className="p-4 bg-gradient-to-br from-blue-500/10 to-green-500/10 rounded-full w-fit mx-auto mb-4">
+                <TrendingUpIcon className="h-12 w-12 text-blue-400 opacity-70" />
+              </div>
               <p>No trades found matching your criteria.</p>
               <p className="text-sm mt-2">Try adjusting your filters or add some trades to get started.</p>
             </div>
@@ -276,9 +278,9 @@ export default function TradesDashboard({ onEditTrade }: TradesDashboardProps) {
                       <TableCell>
                         <div className="flex items-center gap-1">
                           {trade.direction === "long" ? (
-                            <TrendingUpIcon className="h-4 w-4 text-green-600" />
+                            <TrendingUpIcon className="h-4 w-4 text-green-400" />
                           ) : (
-                            <TrendingDownIcon className="h-4 w-4 text-red-600" />
+                            <TrendingDownIcon className="h-4 w-4 text-red-400" />
                           )}
                           <span className="capitalize">{trade.direction}</span>
                         </div>
@@ -294,7 +296,7 @@ export default function TradesDashboard({ onEditTrade }: TradesDashboardProps) {
                       <TableCell>
                         <Badge 
                           variant={trade.status === "open" ? "default" : "secondary"}
-                          className={trade.status === "open" ? "bg-blue-100 text-blue-800 border-blue-200" : ""}
+                          className={trade.status === "open" ? "bg-green-500/20 text-green-300 border-green-500/30" : "bg-gray-500/20 text-gray-300 border-gray-500/30"}
                         >
                           {trade.status}
                         </Badge>

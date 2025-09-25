@@ -18,7 +18,10 @@ import {
   BookOpenIcon,
   BarChart3Icon,
   TableIcon,
-  TargetIcon
+  TargetIcon,
+  DollarSignIcon,
+  TrendingUpIcon as GrowthIcon,
+  ActivityIcon
 } from "lucide-react"
 import Link from "next/link"
 import { logoutUser, auth as authClient } from "@/lib/auth"
@@ -105,28 +108,35 @@ export default function ForexTradingJournal() {
   }
 
   const getPnLColor = (pnl: number) => {
-    return pnl >= 0 ? "text-green-600" : "text-red-600"
+    return pnl >= 0 ? "profit-text" : "loss-text"
   }
 
   const getWinRateColor = (winRate: number) => {
-    if (winRate >= 60) return "text-green-600"
-    if (winRate >= 40) return "text-yellow-600"
-    return "text-red-600"
+    if (winRate >= 60) return "profit-text"
+    if (winRate >= 40) return "warning-text"
+    return "loss-text"
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-green-500/5 pointer-events-none" />
+      <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-green-500/10 rounded-full blur-3xl pointer-events-none" />
+      
       {/* Header */}
-      <div className="border-b">
+      <div className="border-b border-border/50 backdrop-blur-sm bg-card/30 relative z-10">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-primary rounded-lg">
-                <BookOpenIcon className="h-6 w-6 text-primary-foreground" />
+              <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg">
+                <DollarSignIcon className="h-7 w-7 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold">Forex Trading Journal</h1>
-                <p className="text-muted-foreground">Track, analyze, and improve your trading performance</p>
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-green-400 bg-clip-text text-transparent">
+                  Forex Trading Journal
+                </h1>
+                <p className="text-muted-foreground text-sm">Track, analyze, and improve your trading performance</p>
               </div>
             </div>
             
@@ -134,19 +144,23 @@ export default function ForexTradingJournal() {
               {!isAuthed ? (
                 <>
                   <Link href="/login" className="hidden sm:block">
-                    <Button variant="outline">Login</Button>
+                    <Button variant="outline" className="finance-hover">Login</Button>
                   </Link>
                   <Link href="/register" className="hidden sm:block">
-                    <Button>Register</Button>
+                    <Button className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 finance-hover">
+                      Register
+                    </Button>
                   </Link>
                 </>
               ) : (
-                <Button variant="outline" onClick={handleLogout}>Logout</Button>
+                <Button variant="outline" onClick={handleLogout} className="finance-hover">
+                  Logout
+                </Button>
               )}
 
               <Dialog open={isAddTradeOpen} onOpenChange={setIsAddTradeOpen}>
                 <DialogTrigger asChild>
-                  <Button className="flex items-center gap-2">
+                  <Button className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 finance-hover shadow-lg">
                     <PlusIcon className="h-4 w-4" />
                     Add Trade
                   </Button>
@@ -177,9 +191,9 @@ export default function ForexTradingJournal() {
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 relative z-10">
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-3 glass-card p-1">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <BarChart3Icon className="h-4 w-4" />
               Overview
@@ -197,10 +211,12 @@ export default function ForexTradingJournal() {
           <TabsContent value="overview" className="space-y-6">
             {/* Quick Stats */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <Card>
+              <Card className="glass-card finance-hover border-0">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Total P&L</CardTitle>
-                  <BarChart3Icon className="h-4 w-4 text-muted-foreground" />
+                  <div className="p-2 bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-lg">
+                    <BarChart3Icon className="h-4 w-4 text-blue-400" />
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <div className={`text-2xl font-bold ${getPnLColor(stats.totalPnL)}`}>
@@ -212,10 +228,12 @@ export default function ForexTradingJournal() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="glass-card finance-hover border-0">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Win Rate</CardTitle>
-                  <TargetIcon className="h-4 w-4 text-muted-foreground" />
+                  <div className="p-2 bg-gradient-to-br from-green-500/20 to-green-600/20 rounded-lg">
+                    <TargetIcon className="h-4 w-4 text-green-400" />
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <div className={`text-2xl font-bold ${getWinRateColor(stats.winRate)}`}>
@@ -229,10 +247,12 @@ export default function ForexTradingJournal() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="glass-card finance-hover border-0">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Open Trades</CardTitle>
-                  <TrendingUpIcon className="h-4 w-4 text-muted-foreground" />
+                  <div className="p-2 bg-gradient-to-br from-amber-500/20 to-amber-600/20 rounded-lg">
+                    <ActivityIcon className="h-4 w-4 text-amber-400" />
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
@@ -244,10 +264,12 @@ export default function ForexTradingJournal() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="glass-card finance-hover border-0">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Profit Factor</CardTitle>
-                  <TrendingUpIcon className="h-4 w-4 text-muted-foreground" />
+                  <div className="p-2 bg-gradient-to-br from-purple-500/20 to-purple-600/20 rounded-lg">
+                    <GrowthIcon className="h-4 w-4 text-purple-400" />
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
@@ -261,7 +283,7 @@ export default function ForexTradingJournal() {
             </div>
 
             {/* Recent Trades */}
-            <Card>
+            <Card className="glass-card border-0">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
@@ -269,7 +291,8 @@ export default function ForexTradingJournal() {
                     <CardDescription>Your latest trading activity</CardDescription>
                   </div>
                   <Button 
-                    variant="outline" 
+                    variant="outline"
+                    className="finance-hover"
                     size="sm"
                     onClick={() => setIsAddTradeOpen(true)}
                   >
@@ -281,12 +304,17 @@ export default function ForexTradingJournal() {
               <CardContent>
                 {recentTrades.length === 0 ? (
                   <div className="text-center py-12">
-                    <BookOpenIcon className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+                    <div className="p-4 bg-gradient-to-br from-blue-500/10 to-green-500/10 rounded-full w-fit mx-auto mb-4">
+                      <BookOpenIcon className="h-12 w-12 text-blue-400 opacity-70" />
+                    </div>
                     <h3 className="text-lg font-semibold mb-2">Welcome to Your Trading Journal</h3>
                     <p className="text-muted-foreground mb-4 max-w-md mx-auto">
                       Start tracking your forex trades to analyze your performance and improve your trading strategy.
                     </p>
-                    <Button onClick={() => setIsAddTradeOpen(true)}>
+                    <Button 
+                      onClick={() => setIsAddTradeOpen(true)}
+                      className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 finance-hover"
+                    >
                       <PlusIcon className="h-4 w-4 mr-2" />
                       Add Your First Trade
                     </Button>
@@ -294,16 +322,16 @@ export default function ForexTradingJournal() {
                 ) : (
                   <div className="space-y-3">
                     {recentTrades.map((trade) => (
-                      <div key={trade.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+                      <div key={trade.id} className="flex items-center justify-between p-4 glass-card rounded-lg finance-hover border-0">
                         <div className="flex items-center gap-4">
-                          <Badge variant="outline" className="font-mono">
+                          <Badge variant="outline" className="font-mono bg-blue-500/10 border-blue-500/30 text-blue-300">
                             {trade.currencyPair}
                           </Badge>
                           <div className="flex items-center gap-2">
                             {trade.direction === "long" ? (
-                              <TrendingUpIcon className="h-4 w-4 text-green-600" />
+                              <TrendingUpIcon className="h-4 w-4 text-green-400" />
                             ) : (
-                              <TrendingDownIcon className="h-4 w-4 text-red-600" />
+                              <TrendingDownIcon className="h-4 w-4 text-red-400" />
                             )}
                             <span className="capitalize text-sm font-medium">
                               {trade.direction}
@@ -314,7 +342,7 @@ export default function ForexTradingJournal() {
                           </div>
                           <Badge 
                             variant={trade.status === "open" ? "default" : "secondary"}
-                            className={trade.status === "open" ? "bg-blue-100 text-blue-800 border-blue-200" : ""}
+                            className={trade.status === "open" ? "bg-green-500/20 text-green-300 border-green-500/30" : "bg-gray-500/20 text-gray-300 border-gray-500/30"}
                           >
                             {trade.status}
                           </Badge>
@@ -343,7 +371,7 @@ export default function ForexTradingJournal() {
                     
                     {recentTrades.length === 5 && (
                       <div className="text-center pt-4">
-                        <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" className="finance-hover">
                           View All Trades
                         </Button>
                       </div>
@@ -355,30 +383,30 @@ export default function ForexTradingJournal() {
 
             {/* Quick Actions */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setIsAddTradeOpen(true)}>
+              <Card className="glass-card border-0 cursor-pointer finance-hover" onClick={() => setIsAddTradeOpen(true)}>
                 <CardHeader className="text-center">
-                  <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-2">
-                    <PlusIcon className="h-6 w-6 text-primary" />
+                  <div className="mx-auto w-12 h-12 bg-gradient-to-br from-green-500/20 to-green-600/20 rounded-full flex items-center justify-center mb-2">
+                    <PlusIcon className="h-6 w-6 text-green-400" />
                   </div>
                   <CardTitle className="text-lg">Add New Trade</CardTitle>
                   <CardDescription>Log your latest forex trade with detailed analysis</CardDescription>
                 </CardHeader>
               </Card>
 
-              <Card className="cursor-pointer hover:shadow-md transition-shadow">
+              <Card className="glass-card border-0 cursor-pointer finance-hover">
                 <CardHeader className="text-center">
-                  <div className="mx-auto w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-2">
-                    <BarChart3Icon className="h-6 w-6 text-blue-600" />
+                  <div className="mx-auto w-12 h-12 bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-full flex items-center justify-center mb-2">
+                    <BarChart3Icon className="h-6 w-6 text-blue-400" />
                   </div>
                   <CardTitle className="text-lg">View Analytics</CardTitle>
                   <CardDescription>Analyze your performance with detailed metrics</CardDescription>
                 </CardHeader>
               </Card>
 
-              <Card className="cursor-pointer hover:shadow-md transition-shadow">
+              <Card className="glass-card border-0 cursor-pointer finance-hover">
                 <CardHeader className="text-center">
-                  <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-2">
-                    <TableIcon className="h-6 w-6 text-green-600" />
+                  <div className="mx-auto w-12 h-12 bg-gradient-to-br from-purple-500/20 to-purple-600/20 rounded-full flex items-center justify-center mb-2">
+                    <TableIcon className="h-6 w-6 text-purple-400" />
                   </div>
                   <CardTitle className="text-lg">Browse Trades</CardTitle>
                   <CardDescription>Search and filter through all your trades</CardDescription>
