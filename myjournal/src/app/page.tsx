@@ -53,7 +53,11 @@ export default function ForexTradingJournal() {
     updateData()
     const unsubscribe = tradeStore.subscribe(updateData)
     
-    return unsubscribe
+    return () => {
+      if (typeof unsubscribe === "function") {
+        unsubscribe()
+      }
+    }
   }, [])
 
   useEffect(() => {
@@ -156,7 +160,14 @@ export default function ForexTradingJournal() {
                   </DialogHeader>
                   <TradeEntryForm 
                     onSubmit={handleAddTrade} 
-                    initialData={editingTrade || undefined}
+                    initialData={
+                      editingTrade
+                        ? {
+                            ...editingTrade,
+                            images: [] // or convert URLs to File objects if possible
+                          }
+                        : undefined
+                    }
                   />
                 </DialogContent>
               </Dialog>
