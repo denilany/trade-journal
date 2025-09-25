@@ -131,7 +131,7 @@ export default function TradeEntryForm({ onSubmit, initialData }: TradeEntryForm
             <Label htmlFor="currencyPair">Currency Pair *</Label>
             <Select 
               value={formData.currencyPair} 
-              onValueChange={(value) => setFormData(prev => ({ ...prev, currencyPair: value }))}
+              onValueChange={(value: string) => setFormData(prev => ({ ...prev, currencyPair: value }))}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select currency pair" />
